@@ -1,21 +1,9 @@
 <template>
   <div class="container">
 
-    <section class="main">
-          <header class="header">
-            <button @click="resetBoard" class="button is-info is-light">RESET</button>
-          </header>
-
-          <board-comp 
-            :currentStep='currentStep'
-            :board='board'
-            :gameIsOn='gameIsOn'
-            @change-step='changeNextStep'>
-
-          </board-comp>
-          
-    </section>
-
+    <header class="header">
+      <!-- <button @click="resetBoard" class="button is-info is-light">RESET</button> -->
+    </header>
     <section class="notice">
       <!-- игра идет -->
           <article v-if="gameIsOn" class="message is-dark">
@@ -47,6 +35,30 @@
           </article>
     </section>
 
+    <section class="main">
+          <board-comp 
+            :currentStep='currentStep'
+            :board='board'
+            :gameIsOn='gameIsOn'
+            @change-step='changeNextStep'>
+
+          </board-comp>
+    </section>
+
+    <section class="option">
+        <div @click="optionOpen = !optionOpen" class="option__wrapper" :class="{wrActive: optionOpen}">
+          <div class="option__divider"></div>
+          <div  class="option__title">
+            Options
+          </div>
+        </div>
+          <ul v-if="optionOpenTimer">
+            <li @click="resetBoard" :class="{liOneActive: optionOpenTimer}"><i title="Reset" class="bi bi-arrow-clockwise"></i> </li>
+            <li :class="{liTwoActive: optionOpenTimer}"><i class="bi bi-capsule-pill"></i></li>
+            <li :class="{liThreeActive: optionOpenTimer}"><i class="bi bi-chat-quote-fill"></i></li>
+            <li :class="{liFourActive: optionOpenTimer}"><i class="bi bi-cup-hot-fill"></i></li>
+          </ul>
+    </section>
 
 
 
@@ -69,7 +81,10 @@ export default {
       currentStep: 'X',
       board: [0,0,0,0,0,0,0,0,0],
       gameIsOn: true,
-      winner: ''
+      winner: '',
+
+      optionOpen: false,
+      optionOpenTimer: false,
     }
   },
   methods:{
@@ -100,6 +115,14 @@ export default {
         setTimeout(() => { 
           clearInterval(timerId) 
         }, 450);
+    },
+    optionShow(){
+      if(this.optionOpen){
+        setTimeout(() =>{
+          this.optionOpenTimer = true
+        }, 0)
+      }
+      else this.optionOpenTimer = false
     },
     searchWinner(currentStep){
         for(let i = 0; i < this.board.length; i++){
@@ -155,32 +178,20 @@ export default {
 
             this.gameIsOn = false
           }
-
-
-
-
-          // if(this.board[i] === this.board[i + 1] && this.board[i + 2] && this.board[i] != 0){
-          //    console.log(`win ${this.board[i]}`)
-          //   this.gameIsOn = false
-
-          // }
-          // // if(this.board[i] === this.board[i + 2] &&  this.board[i + 4] && this.board[i] != 0){
-          // //    console.log(`win ${this.board[i]}`)
-          // //     this.gameIsOn = false
-
-          // // }
-          // if(this.board[i] === this.board[i + 3] && this.board[i + 6] && this.board[i] != 0){
-          //    console.log(`win ${this.board[i]}`)
-          //    this.gameIsOn = false
-
-          // }
-          // if(this.board[i] === this.board[i + 4] && this.board[i + 8] && this.board[i] != 0){
-          //    console.log(`win ${this.board[i]}`)
-          //     this.gameIsOn = false
-      
-          // }
         }
     }
+  },
+  watch:{
+    optionOpen(){
+      this.optionShow()
+    },
+    board:{
+          handler(){
+              this.optionOpen = false
+          },
+          deep: true
+        },
+
   }
 }
 </script>
@@ -209,5 +220,230 @@ html {
 .notice{
   display: flex;
   justify-content: center;
+  margin-top: 25px;
+}
+
+.option{
+  position: relative;
+  padding: 25px 0;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  &__title{
+    font-weight: 700;
+    text-align: left;
+    padding-left: 6px;
+    position: absolute;
+    top: 30px;
+    
+  }
+  ul{
+    position: relative;
+    z-index: 0;
+    li{
+      color: aliceblue;
+      width: 30px;
+      height: 30px;
+      font-size: 30px;
+      cursor: pointer;
+      i{
+        // box-shadow: 3px 3px 13px #000, -3px -3px 13px #000;
+      }
+      // background-color: darkgray;
+      &:nth-child(1){
+        position: absolute;
+        left: -160px;
+        transform: rotateZ(-30deg);
+        animation: showLI1 0.5s   1 ease;
+        // opacity: 0;
+      }
+      &:nth-child(2){
+        position: absolute;
+        right: -64px;
+        top: 20px;
+        transform: rotateZ(25deg);
+        animation: showLI2 0.5s  1 ease-in;
+      }
+      &:nth-child(3){
+        position: absolute;
+        left: -130px;
+        top: 110px;
+        transform: rotateZ(-15deg);
+        animation: showLI3 0.5s   1 cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
+      &:nth-child(4){
+        position: absolute;
+        right: -54px;
+        top: 130px;
+        transform: rotateZ(20deg);
+        animation: showLI4 0.5s  1 cubic-bezier(0.075, 0.82, 0.165, 1);
+      }
+      
+    }
+  }
+  &__wrapper{
+    width: 70px;
+    height: 70px;
+    background-color: #222022;
+    transition: 0.5s all;
+    border-radius: 3px;
+    cursor: pointer;
+    
+  }
+  &__divider{
+    height: 4px;
+    border-radius: 3px 3px 0 0;
+    background-color: hsl(348deg 100% 61%);
+  }
+}
+
+
+.titleActivre{
+  animation: wrShaking 0.2s   2 ease;
+}
+.wrActive{
+  width: 90px;
+  height: 90px;
+  background-color: #3b363b;
+  box-shadow: 3px 3px 13px #000, -3px -3px 13px #000;
+  border-top: 31px solid hsl(0, 0%, 96%);
+  // animation: wrShaking 0.2s   2 ease;
+  z-index: 10;
+}
+
+
+.liOneActive{
+  left: -60px;
+  transform: rotateZ(-30deg);
+  opacity: 1;
+}
+.liTWoActive{
+  left: -60px;
+  transform: rotateZ(-30deg);
+  opacity: 1;
+}
+.liThreeActive{
+  left: -60px;
+  transform: rotateZ(-30deg);
+  opacity: 1;
+}
+.liFourActive{
+  // left: -60px;
+  transform: rotateZ(-30deg);
+  opacity: 1;
+}
+@keyframes wrShaking{
+  0%{
+    transform: rotateZ(0deg);
+  }
+  50%{
+    transform: rotateZ(8deg);
+  }
+  60%{
+    transform: rotateZ(0deg);
+  }
+  75%{
+    transform: rotateZ(-8deg);
+  }
+  100%{
+    transform: rotateZ(0deg);
+  }
+}
+
+@keyframes showLI1{
+  0%{
+    left: -40px;
+    transform: rotateZ(0deg);
+  }
+  25%{
+    font-size: 15px;
+
+  }
+  50%{
+    font-size: 30px;
+
+  }
+  75%{
+    font-size: 25px;
+  }
+  100%{
+    left: -160px;
+    transform: rotateZ(-30deg);
+    opacity: 1;
+    
+  }
+}
+
+@keyframes showLI2{
+  0%{
+    right: 0;
+    transform: rotateZ(0deg);
+  }
+  25%{
+    font-size: 15px;
+
+  }
+  50%{
+    font-size: 30px;
+
+  }
+  75%{
+    font-size: 25px;
+  }
+  100%{
+    right: -64px;
+    top: 20px;
+    transform: rotateZ(25deg);
+    
+  }
+}
+@keyframes showLI3{
+  0%{
+    left: -30px;
+    top: 0;
+    transform: rotateZ(0deg);
+  }
+  25%{
+    font-size: 15px;
+
+  }
+  50%{
+    font-size: 30px;
+
+  }
+  75%{
+    font-size: 25px;
+  }
+  100%{
+    left: -130px;
+    top: 110px;
+    transform: rotateZ(-15deg);
+    opacity: 1;
+  }
+}
+@keyframes showLI4{
+  0%{
+    right: 20px;
+    top: 0;
+    transform: rotateZ(0deg);
+  }
+  25%{
+    font-size: 15px;
+
+  }
+  50%{
+    font-size: 30px;
+
+  }
+  75%{
+    font-size: 25px;
+  }
+  100%{
+    // right: -54px;
+    // top: 130px;
+    // transform: rotateZ(20deg);
+    opacity: 1;
+  }
 }
 </style>
