@@ -50,6 +50,9 @@
           <div class="option__divider"></div>
           <div  class="option__title">
             Options
+            <div v-if="optionOpenTimer" class="option__back">
+              <i class="bi bi-arrow-right"></i>
+            </div>
           </div>
         </div>
           <ul v-if="optionOpenTimer">
@@ -238,6 +241,14 @@ html {
     top: 30px;
     
   }
+  &__back{
+    position: absolute;    
+    right: -15px;
+    top: 50px;
+    i{
+      font-size: 25px;
+    }
+  }
   ul{
     position: relative;
     z-index: 0;
@@ -247,6 +258,14 @@ html {
       height: 30px;
       font-size: 30px;
       cursor: pointer;
+      width: 40px;
+      height: 40px;
+      background-color: #3b363b;
+      box-shadow: 8px 8px 13px #020202, -8px -8px 12px #0a0909;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 3px;
       i{
         // box-shadow: 3px 3px 13px #000, -3px -3px 13px #000;
       }
